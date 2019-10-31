@@ -6,6 +6,15 @@ require 'colorize'
 
 require_relative '../../app/helpers/sip/tareasrake_helper'
 
+# https://github.com/rails/webpacker/blob/master/docs/engines.md
+def ensure_log_goes_to_stdout
+  old_logger = Webpacker.logger
+  Webpacker.logger = ActiveSupport::Logger.new(STDOUT)
+  yield
+ensure
+  Webpacker.logger = old_logger
+end
+
 namespace :sip do
   desc "Actualiza indices"
   task indices: :environment do
@@ -160,6 +169,30 @@ namespace :sip do
 		puts command
 		raise "Error al restaurar #{arch}" unless Kernel.system(command)
   end
+
+  namespace :webpacker do
+    desc "Instala dependencias con yarn"
+    task :yarn_install do
+      Dir.chdir(File.join(__dir__, "../..")) do
+        system "yarn install --check-files --production"
+      end
+    end
+
+    desc "Compila paquetes JavaScript con webpack para producción con condensados"
+    task compile: [:yarn_install, :environment] do
+      Webpacker.with_node_env("production") do
+        ensure_log_goes_to_stdout do
+          if Sip.webpacker.commands.compile
+            # Successful compilation!
+          else
+            # Failed compilation
+            exit!
+          end
+        end
+      end
+    end
+  end
+
 end
 
 # de https://github.com/opdemand/puppet-modules/blob/master/rails/files/databases.rake
@@ -168,4 +201,31 @@ def set_psql_env(config)
 	ENV['PGPORT']     = config['port'].to_s     if config['port']
 	ENV['PGPASSWORD'] = config['password'].to_s if config['password']
 	ENV['PGUSER']     = config['username'].to_s if config['username']
+end
+
+def yarn_install_available?
+  rails_major = Rails::VERSION::MAJOR
+  rails_minor = Rails::VERSION::MINOR
+
+  rails_major > 5 || (rails_major == 5 && rails_minor >= 1)
+end
+
+def enhance_assets_precompile
+  # yarn:install was added in Rails 5.1
+  deps = yarn_install_available? ? [] : ["sip:webpacker:yarn_install"]
+  Rake::Task["assets:precompile"].enhance(deps) do
+    Rake::Task["sip:webpacker:compile"].invoke
+  end
+end
+
+# Compile packs after we've compiled all other assets during precompilation
+skip_webpacker_precompile = %w(no false n f).include?(
+  ENV["WEBPACKER_PRECOMPILE"])
+
+unless skip_webpacker_precompile
+  if Rake::Task.task_defined?("assets:precompile")
+    enhance_assets_precompile
+  else
+    Rake::Task.define_task("assets:precompile" => "sip:webpacker:compile")
+  end
 end

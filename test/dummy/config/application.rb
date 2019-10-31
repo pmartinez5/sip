@@ -35,6 +35,11 @@ module Dummy
 
     #config.web_console.whitelisted_ips = ['x.y.z.a']
    
+    config.middleware.use(
+      Rack::Static,
+      urls: ["/sip-packs"], root: File.join(
+        Gem::Specification.find_by_name("sip").gem_dir, 'public')
+    )
 
   end
 end
