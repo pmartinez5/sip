@@ -49,53 +49,38 @@ production:
 - Incluye ```sip``` y otras gemas necesarias (Asegúrate de no tener repetidas gemas en tu archivo Gemfile):
 ```sh
 $ cat >> Gemfile <<EOF
+
+gem 'bootstrap-datepicker-rails'# Control para elegir fechas 
+
+gem 'cancancan'                  # Control de acceso
+
+gem 'chosen-rails'              # Campos de selección más funcionales 
+
+gem 'devise'   # Autenticación
+
+gem 'devise-i18n'                # Localización e Internacionalización                  
+gem 'font-awesome-rails' # Iconos de FontAwesome
+
+gem 'jquery-ui-rails'           # Usamos jquery 
+
+gem 'jquery-rails'                # Usamos jquery
+
+gem 'paperclip'                   # Anexos
+
+gem 'rails-i18n'                # Localización e Internacionalización 
+
+gem 'simple_form'  # Formularios
+
+gem 'twitter-bootstrap-rails'   # Entorno CSS Bootstrap 
+
+gem "turbolinks" # Seguir enlaces más rápido. 
+
+gem 'twitter_cldr'              # Localiación e internacionalización 
+
+gem 'will_paginate'              # Pagina listados
+
 # Motor SIP
 gem 'sip', git: "https://github.com/pasosdeJesus/sip.git"
-
-# Anexos
-gem 'paperclip'                  
-
-# Formularios
-gem 'simple_form'  
-
-# Control de acceso
-gem 'cancancan'                  
-
-# Autenticación
-gem 'devise'   
-
-# Localización e Internacionalización                  
-gem 'devise-i18n'                
-
-# Localización e Internacionalización
-gem 'rails-i18n'                 
-
-# Pagina listados
-gem 'will_paginate'              
-
-# Entorno CSS Bootstrap
-gem 'twitter-bootstrap-rails'    
-
-# Iconos de FontAwesome
-gem 'font-awesome-rails'
-
-# Usamos jquery
-gem 'jquery-ui-rails'            
-
-# Control para elegir fechas
-gem 'bootstrap-datepicker-rails'
-
-# Localiación e internacionalización
-gem 'twitter_cldr'               
-
-# Campos de selección más funcionales
-gem 'chosen-rails'               
-
-# Usamos jquery
-gem 'jquery-rails'               
-
-# Seguir enlaces más rápido. Ver: https://github.com/rails/turbolinks
-gem "turbolinks"
 EOF
 $ bundle install
 ```

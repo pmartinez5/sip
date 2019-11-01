@@ -17,18 +17,19 @@
 
 console.log('Hello World from Webpacker')
 
-var $ = require("jquery"); 
+import {$,jQuery} from 'jquery';
+window.$ = $;
+window.jQuery = jQuery;
+
+
 import "popper.js"
 import "bootstrap"
 import "bootstrap/js/dist/dropdown"
-
-
 
 //require("@rails/ujs").start()
 //require("turbolinks").start()
 //require("@rails/activestorage").start()
 //require("channels")
 
-import "bootstrap"
 import "../stylesheets/application"
 
