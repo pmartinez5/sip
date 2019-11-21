@@ -96,10 +96,6 @@ end
 
 group :test do
 
-  #gem 'capybara'
-
-  gem 'chromedriver-helper'
-
   gem "connection_pool"
 
   gem "minitest"
